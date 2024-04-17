@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+	<!-- <bean id="helloService" class="com.example.myapp.aop.HelloService" /> -->
+	<bean id="helloService" class="com.example.myapp.aop.HelloServiceProxy" /><!-- HelloService클래스를 Proxy클래스를 사용하면 로그가 정상적으로 출력됨 -->
+	<bean id="helloController" class="com.example.myapp.aop.HelloController">
+		<property name="helloService" ref="helloService" /> <!-- name은 컨트롤러클래스의 setter메서드 이름을 따라감 -->
+	</bean>
+	
+	<!-- <context:component-scan base-package="com.example.myapp" /> -->
+</beans>
