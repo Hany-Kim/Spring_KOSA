@@ -3,12 +3,21 @@ package com.example.myapp.aop;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.stereotype.Component;
 
+@Aspect
 public class HelloLog {
+	@Pointcut(value="execution(* com.example..*.sayHello(..))") // <aop:pointcut expression="execution(* com.example..HelloService.sayHello(..))" id="hello"/>
+	private void helloPointcut() {}
+	
 //	public static void log() { // Proxy에서 바로 호출해서 사용하려고 static 붙임
 //		System.out.println(">>>LOG<<< : " + new java.util.Date());
 //	}
 	
+	@Before("helloPointcut()") // private void helloPointcut() {} 호출
 	public void log(JoinPoint joinpoint) { // Proxy에서 바로 호출해서 사용하려고 static 붙임
 		Signature signature = joinpoint.getSignature();
 		String methodName = signature.getName(); // sayHello

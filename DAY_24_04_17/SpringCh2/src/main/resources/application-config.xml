@@ -15,23 +15,24 @@
 	
 	<!-- <context:component-scan base-package="com.example.myapp" /> -->
 	
-	
 	<!-- AOP설정 -->
+	<!-- bean 생성 -->
 	<bean id="helloLog" class="com.example.myapp.aop.HelloLog" />
 	<!-- 어떤 핵심코드에 어떤 공통코드가 언제 실행되는지 설정 -->
-	<aop:config>
-	
-		<!-- 핵심코드(Pointcut) 설정 -->
+	<!-- <aop:config>
+		핵심코드(Pointcut) 설정
 		<aop:pointcut expression="execution(* com.example..HelloService.sayHello(..))" id="hello"/>
 		
-		<!-- hello Pointcut에 before 어드바이스 설정 -->
-		<aop:aspect ref="helloLog"> <!-- AOP설정에 해둔 bean의 id를 참조 -->
-			<!-- <aop:before pointcut-ref="hello" method="log"/> --> <!-- 위에 만들어둔 aop:pointcut 태그의 id값을 참조(ref) -->
-			<!-- <aop:after pointcut-ref="hello" method="log"/> -->
-			<!-- <aop:after-returning pointcut-ref="hello" method="resultLog" returning="resultObj"/> -->
-			<!-- <aop:after-throwing method="exceptionLog" pointcut-ref="hello" throwing="exception"/> -->
+		hello Pointcut에 before 어드바이스 설정
+		<aop:aspect ref="helloLog"> AOP설정에 해둔 bean의 id를 참조
+			<aop:before pointcut-ref="hello" method="log"/> 위에 만들어둔 aop:pointcut 태그의 id값을 참조(ref)
+			<aop:after pointcut-ref="hello" method="log"/>
+			<aop:after-returning pointcut-ref="hello" method="resultLog" returning="resultObj"/>
+			<aop:after-throwing method="exceptionLog" pointcut-ref="hello" throwing="exception"/>
 			<aop:around method="aroundLog" pointcut-ref="hello"/>
 		</aop:aspect>
 		
-	</aop:config>
+	</aop:config> -->
+	
+	<aop:aspectj-autoproxy />
 </beans>
