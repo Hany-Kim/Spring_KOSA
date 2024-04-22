@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+	
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<annotation-driven />
+
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+	<resources mapping="/resources/**" location="/resources/" /> <!-- location은 scr.main.webapp.resources를 가르킴 -->
+	<resources mapping="/css/**" location="/resources/css/" />
+	<resources mapping="/js/**" location="/resources/js/" />
+	<resources mapping="/images/**" location="/resources/images/" />
+
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+	
+	<context:component-scan base-package="com.example.myapp" />	
+	
+	<interceptors>
+		<interceptor>
+			<mapping path="/hr/insert" />
+			<!-- <mapping path="/hr/**" />
+			<exclude-mapping path="/hr/count" />
+			<mapping path="/**" />
+			<exclude-mapping path="/hr/count" /> -->
+			<beans:bean class="com.example.myapp.hr.controller.LogInterceptor" />
+		</interceptor>
+	</interceptors>
+	
+	<view-controller path="/hr2/form" view-name="hr/insertform" /> <!-- 컨트롤러없이 jsp를 다이렉트로 들어가고 싶을 때 사용 -->
+	<!-- <view-controller path="/hr/insert/form" view-name="hr/insertform" />
+	path variable과 컨트롤러의 깊이가 같은 값을 사용하면 안됨. /hr/form을 하게된다면 컨트롤러에서 이미 구현해둔 /hr/{...}과 충돌이 발생함. 
+	/hr/insert/form으로 깊이를 하나다 늘려서 해결할 수 있다. 단, css가 적용되지 않는 모습을 볼 수 있다. jsp파일이 한단계 더 깊어졌기때문에 css가 찾을 수 없어서 /hr/insert/form jsp에는 css가 적용되지 못했다. -->
+</beans:beans>
