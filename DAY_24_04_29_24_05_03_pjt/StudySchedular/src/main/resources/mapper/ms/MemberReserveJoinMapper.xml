@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.schedular.ms.dao.IMemberReserveJoinRepository">
+	
+	<!-- 가장 큰 id값 불러오기 -->
+	<select id="getMaxJoinId" resultType="int">
+		SELECT NVL(MAX(join_id),0) FROM member_reserve_join
+	</select>
+	
+	<!-- 예약시 조인 -->
+	<insert id="insertMemberReserveJoin" parameterType="com.study.schedular.ms.model.MemberReserveJoin">
+		INSERT INTO member_reserve_join
+			(join_id, user_id, reserve_id)
+		VALUES
+			(#{joinId}, #{userId}, #{reserveId})
+	</insert>
+	
+	<delete id="deleteJoin">
+		DELETE member_reserve_join WHERE user_id=#{param1} AND reserve_id=#{param2} 
+	</delete>
+
+</mapper>

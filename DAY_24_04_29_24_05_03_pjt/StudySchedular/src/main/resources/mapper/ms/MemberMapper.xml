@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.schedular.ms.dao.IMemberRepository">
+	
+	<!-- 가장 큰 id값 불러오기 -->
+	<select id="getMaxMemberId" resultType="int">
+		SELECT NVL(MAX(user_id),0) FROM member
+	</select>
+	
+	<!-- 이름과 전화번호로 id조회 -->
+	<select id="getMemberId" parameterType="com.study.schedular.ms.model.Member" resultType="string">
+		SELECT user_id FROM member 
+		WHERE 
+			name=#{name}
+			AND phone=#{phone}
+	</select>
+	
+	<!-- 멤버 폰번호 가져오기 -->
+	<select id="getPhone" parameterType="int" resultType="string">
+		SELECT phone FROM member
+		WHERE user_id=#{userId}
+	</select>
+	
+	<!-- 멤버 사진 가져오기 -->
+	<select id="getProfile" parameterType="int" resultType="string">
+		SELECT profile FROM member
+		WHERE user_id=#{userId}
+	</select>
+	
+	<!-- 신규 멤버 -->
+	<insert id="insertMember" parameterType="com.study.schedular.ms.model.Member">
+		INSERT INTO member
+			(user_id, name, phone, profile, password)
+		VALUES
+			(#{userId}, #{name}, #{phone}, #{profile}, #{password})
+	</insert>
+	
+	<!-- 멤버 정보 수정 -->
+	
+	<!-- 회원 목록 조회 쿼리 -->
+    <select id="getAllMembers" resultType="com.study.schedular.ms.model.Member">
+        SELECT user_id as userid, name, SUBSTR(phone, -4) as phone, profile, password FROM member order by name asc
+    </select>
+    
+	<!-- 이름으로 검색하기 -->
+    <!-- <select id="searchMembersByName" parameterType="String" resultType="com.study.schedular.ms.model.Member">
+        SELECT user_id as userid, name, SUBSTR(phone, -4) as phone, profile, password
+		FROM member
+		WHERE name LIKE '%' || #{name} || '%'
+    </select>  -->
+
+	<!-- 특정 멤버 조회하기 -->
+	<select id="getUserInfo" resultType="com.study.schedular.ms.model.Member">
+		SELECT user_id as userid, name, phone, profile, password
+		FROM member
+		where user_id = #{user_id}
+	</select>
+	
+	<select id="getPassword" parameterType="String" resultType="string">
+		SELECT password FROM member WHERE phone=#{phone}
+	</select>
+	
+	<select id="getName" parameterType="String" resultType="string">
+		SELECT name FROM member WHERE phone=#{phone}
+	</select>
+	
+	<!-- 우석님 작업중 -->
+	<select id="onePastReserveInfo" resultType="com.study.schedular.ms.model.Reserve">
+   		SELECT
+			r.reserve_id as reserveId,
+			r.captain_name as captainName,
+			r.start_time as startTime,
+			r.end_time as endTime,
+			r.start_date as startDate,
+			r.end_date as endDate,
+			r.content as content,
+	        s.STUDY_ID as studyId,
+			r.captain_phone as captainPhone,
+			s.study_name as studyName
+		FROM 
+			reserve r
+		JOIN study s ON r.study_id = s.study_id
+		
+   		WHERE reserve_id = #{reserveId}
+	</select>
+
+
+	<!-- 미래예약정보  -->
+	<select id="getFutureReserveInfo"  parameterType="int" resultType="com.study.schedular.ms.model.Reserve">
+		SELECT
+			r.reserve_id as reserveId,
+			r.captain_name as captainName,
+			r.start_time as startTime,
+			r.end_time as endTime,
+			r.start_date as startDate,
+			r.end_date as endDate,
+			r.content as content,
+			r.captain_phone as captainPhone,
+			s.study_name as studyName
+		FROM 
+			reserve r
+			JOIN member_reserve_join mrj ON r.reserve_id = mrj.reserve_id
+			JOIN member m ON mrj.user_id = m.user_id
+			JOIN study s ON r.study_id = s.study_id
+			
+		WHERE mrj.user_id = #{user_id} and (r.end_time > current_TIMESTAMP)
+	</select>
+	<!--과거내역  -->
+	<select id="getPastReserveInfo"  parameterType="int" resultType="com.study.schedular.ms.model.Reserve">
+	<![CDATA[
+
+		SELECT
+			r.reserve_id as reserveId,
+			r.captain_name as captainName,
+			r.start_time as startTime,
+			r.end_time as endTime,
+			r.start_date as startDate,
+			r.end_date as endDate,
+			r.content as content,
+			r.captain_phone as captainPhone,
+			s.study_name as studyName
+		FROM 
+			reserve r
+			JOIN member_reserve_join mrj ON r.reserve_id = mrj.reserve_id
+			JOIN member m ON mrj.user_id = m.user_id
+			JOIN study s ON r.study_id = s.study_id
+			
+		WHERE mrj.user_id = #{user_id} and r.end_time < current_TIMESTAMP
+		]]>
+	</select>
+	<update id="updateMember"  parameterType="com.study.schedular.ms.model.Member">
+		UPDATE member
+		SET	name=#{name}, phone=#{phone},
+			   profile=#{profile}
+		WHERE user_id = #{userId}
+	</update>
+	
+	<update id="updatePast" parameterType="com.study.schedular.ms.model.Reserve">
+		UPDATE reserve
+		SET 
+			content = #{content},
+			start_time = #{startTime},
+			end_time = #{endTime},
+			start_date = #{startDate},
+			reserve_id = #{reserveId},
+			end_date = #{endDate},
+			captain_phone =#{captainPhone},
+			captain_name = #{captainName}
+		WHERE reserve_id = #{reserveId}
+	</update>
+	<!-- 
+	<update id="updateReserve"
+		parameterType="com.study.schedular.ms.model.Reserve">
+		UPDATE reserve
+		SET content = #{content}
+		WHERE reserve_id = #{reserveId}
+	</update>  -->
+	
+	<!-- 공부한거 정보 -->
+	<!-- <select id="getStudyInfo"  parameterType="int" resultType="com.study.schedular.ms.model.Study">
+	SELECT r.reserve_id as reserveId, r.start_time as startTime, r.end_time as endTime, r.start_date as startDate, r.end_date as,endDate r.content as content, s.study_name as studyName, s.study_profile as studyProfile
+	FROM reserve r
+	JOIN member_reserve_join mrj ON r.reserve_id = mrj.reserve_id
+	JOIN member m ON mrj.user_id = m.user_id
+	JOIN study s ON r.study_id = s.study_id
+	WHERE mrj.user_id = #{userid} 
+	</select> -->
+
+</mapper>
